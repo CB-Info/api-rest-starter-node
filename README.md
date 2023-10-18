@@ -48,3 +48,19 @@ git add .
 git commit -m "first commit"
 git push -f origin main
 ```
+
+### Step 7
+
+Installer les dépendances
+
+```bash
+npm i
+```
+
+### Step 8
+
+Lancer le server
+
+```bash
+npm run start
+```

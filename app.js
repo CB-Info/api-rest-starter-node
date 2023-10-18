@@ -4,24 +4,27 @@ const express = require('express'),
     cors = require('cors'),
     authMiddleware = require('./middlewares/auth'),
     //authRoutes = require('./routes/auth'),
+    authenticateUser = require('./middlewares/authMiddleware'),
+    testRoutes = require('./routes/test'),
+    userRoutes = require('./routes/userRoutes'),
+    logRoutes = require('./routes/logRoutes')
     connectionMongoDB = require('./mongoDB/connection'),
-    restrictOrigin = require("./middlewares/restrictOrigin"),
     app = express();
 
 connectionMongoDB()
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(restrictOrigin);
 app.use(morgan("dev"));
 
-//Define the endpoint
-app.get("/ping", (req, res) => {  
-    return res.send({
-      status: "Healthy",
-    });
-  });
-
 //app.use('/api/auth', authMiddleware, authRoutes);
+app.use('/', testRoutes);
+app.use('/', logRoutes);
+app.use('/api', authenticateUser, userRoutes);
+
+// Gestionnaire d'erreur pour les routes non trouvées
+app.use((req, res, next) => {
+  res.status(404).json({ error: 'Route non trouvée' });
+});
 
 module.exports = app;

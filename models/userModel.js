@@ -1,12 +1,22 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-/*
 const userSchema = mongoose.Schema({
-    firebaseId: { type: String, require: true, unique: true },
-    email: { type: String, require: true, unique: true },
-    firstName: { type: String, require: true },
-    lastName: { type: String, require: true }
-})
-*/
+    name: String,
+    email: String,
+    password: String, // Champ de mot de passe
+});
 
-//module.exports = mongoose.model("User", userSchema);
+// Fonction pour hacher le mot de passe avant de le sauvegarder
+userSchema.pre('save', async function (next) {
+    const user = this;
+
+    if (user.isModified('password')) {
+        const saltRounds = 10;
+        user.password = await bcrypt.hash(user.password, saltRounds);
+    }
+
+    next();
+});
+
+module.exports = mongoose.model("User", userSchema);
