@@ -1,24 +1,31 @@
 {
-  "name": NAME_PROJECT,
+  "name": "API_REST",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
+    "dev": "nodemon sever.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+" + REPO_GIT
+    "url": "git@github.com:CB-Info/api-rest-starter-node.git"
   },
   "author": "",
   "license": "ISC",
-  "homepage": REPO_GIT + "#readme",
+  "homepage": "https://github.com/CB-Info/api-rest-starter-node.git#readme",
   "dependencies": {
-    "body-parser": "^1.20.0",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "express": "^4.18.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "firebase-admin": "^11.0.0",
-    "mongoose": "^6.4.2"
+    "helmet": "^7.0.0",
+    "mongo-sanitize": "^1.1.0",
+    "mongoose": "^6.4.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.1",
+    "uuid": "^9.0.1"
   }
 }

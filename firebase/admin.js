@@ -1,3 +1,4 @@
+/*
 const firebase = require("firebase-admin");
 const credentials = require("./credentials.json");
 
@@ -6,3 +7,4 @@ firebase.initializeApp({
 });
 
 module.exports = firebase;
+*/
