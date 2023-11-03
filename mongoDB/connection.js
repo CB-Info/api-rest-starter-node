@@ -5,9 +5,9 @@ async function connectionMongoDB() {
     try {
         await mongoose.connect(
             process.env.MONGO_URL) //change the mongodb link
-        console.log("Connecté à mongodb")
+        console.log("CONNECTED TO MONGO DB")
     } catch (e) {
-        console.log("Problème de connexion")
+        console.log("CONNEXION ERROR")
     }
 }
 

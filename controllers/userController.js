@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const etag = require('etag');
 
 // Récupérer la liste des utilisateurs
 exports.getUsers = async (req, res) => {
@@ -9,10 +10,25 @@ exports.getUsers = async (req, res) => {
         const users = await User.find();
 
         if (users.length === 0) {
-            return res.status(404).json({ message: 'Aucun utilisateur trouvé dans la base de données.' });
+            return res.status(404).json({ message: 'Empty DATA' });
         }
 
-        return res.json(users);
+        // Convertissez la liste des utilisateurs en une chaîne JSON
+        const usersJSON = JSON.stringify(users);
+
+        const ETag = etag(usersJSON).replace(/\"/g, "");
+
+        if (req.headers['if-none-match'] === ETag) {
+            // Le client a la version en cache, renvoyez 304 Not Modified.
+            console.log("== not-modified")
+            return res.status(304).json({ message: 'Same DATA' });
+        } else {
+            // La version a été modifiée, renvoyez la liste des utilisateurs.
+            console.log("== modified")
+            res.set('etag', ETag)
+            return res.json({ users, ETag });
+        }
+
     } catch (error) {
         return res.status(500).json({ error: 'Une erreur s\'est produite lors de la récupération des utilisateurs.' });
     }
@@ -30,24 +46,24 @@ exports.createUser = async (req, res) => {
             if (!email) missingFields.push('email');
             if (!password) missingFields.push('password');
 
-            return res.status(400).json({ error: `Champs manquants : ${missingFields.join(', ')}` });
+            return res.status(400).json({ error: `MISSING : ${missingFields.join(', ')}` });
         }
 
         // Vérifiez la complexité du mot de passe
         if (!isStrongPassword(password)) {
-            return res.status(400).json({ error: `Le mot de passe ne répond pas aux critères de complexité. Le mot de passe doit contenir au moins : 8 caractères, une majuscule, un chiffre et un symbole.`});
+            return res.status(400).json({ error: `INVALID PASSWORD : 8 caractères, une majuscule, un chiffre et un symbole.` });
         }
-        
+
         // Vérifiez si l'utilisateur existe déjà
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ error: 'Cet utilisateur existe déjà.' });
+            return res.status(400).json({ error: 'USER ALREADY EXIST' });
         }
 
         // Créez un nouvel utilisateur
         const newUser = new User({ name, email, password /* autres champs */ });
         await newUser.save();
-        
+
         return res.status(201).json(newUser); // Renvoie le nouvel utilisateur créé
     } catch (error) {
         return res.status(500).json({ error: 'Une erreur s\'est produite lors de la création de l\'utilisateur.' });
@@ -61,14 +77,14 @@ exports.updateUser = async (req, res) => {
         const updates = req.body; // Les modifications à apporter
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ error: 'ID d\'utilisateur invalide.' });
+            return res.status(400).json({ error: 'INVALID USER ID' });
         }
 
         // Si le mot de passe est inclus dans les mises à jour, vérifiez et hachez-le
         if (updates.password) {
             try {
                 if (!isStrongPassword(updates.password)) {
-                    return res.status(400).json({ error: `Le mot de passe ne répond pas aux critères de complexité. Le mot de passe doit contenir au moins : 8 caractères, une majuscule, un chiffre et un symbole.`});
+                    return res.status(400).json({ error: `Le mot de passe ne répond pas aux critères de complexité. Le mot de passe doit contenir au moins : 8 caractères, une majuscule, un chiffre et un symbole.` });
                 }
                 const saltRounds = 10;
                 updates.password = await bcrypt.hash(updates.password, saltRounds);

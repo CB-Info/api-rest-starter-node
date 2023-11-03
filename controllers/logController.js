@@ -12,18 +12,18 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ error: 'Identifiants incorrects' });
+      return res.status(401).json({ error: 'WRONG ID' });
     }
 
     // Vérification du mot de passe
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Mot de passe incorrects' });
+      return res.status(401).json({ error: 'WRONG PASSWORD' });
     }
 
     // Génération du JWT
-    const token = jwt.sign({ userId: user._id }, 'clé_secrète', { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     // Réponse avec le token
     res.json({ token });

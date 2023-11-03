@@ -2,12 +2,10 @@ const morgan = require("morgan");
 const express = require('express'),
     bodyParser = require('body-parser'),
     cors = require('cors'),
-    authMiddleware = require('./middlewares/auth'),
-    //authRoutes = require('./routes/auth'),
-    authenticateUser = require('./middlewares/authMiddleware'),
     testRoutes = require('./routes/test'),
     userRoutes = require('./routes/userRoutes'),
-    logRoutes = require('./routes/logRoutes')
+    logRoutes = require('./routes/logRoutes'),
+    swaggerRouter = require('./swagger/swagger',)
     connectionMongoDB = require('./mongoDB/connection'),
     app = express();
 
@@ -20,11 +18,12 @@ app.use(morgan("dev"));
 //app.use('/api/auth', authMiddleware, authRoutes);
 app.use('/', testRoutes);
 app.use('/', logRoutes);
-app.use('/api', authenticateUser, userRoutes);
+app.use('/api', userRoutes);
+app.use('/', swaggerRouter);
 
 // Gestionnaire d'erreur pour les routes non trouvées
 app.use((req, res, next) => {
-  res.status(404).json({ error: 'Route non trouvée' });
+  res.status(404).json({ error: 'NO ROUTE' });
 });
 
 module.exports = app;
