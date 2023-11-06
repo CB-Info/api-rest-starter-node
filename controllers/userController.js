@@ -10,7 +10,7 @@ exports.getUsers = async (req, res) => {
         const users = await User.find();
 
         if (users.length === 0) {
-            return res.status(404).json({ message: 'Empty DATA' });
+            return res.status(404).json({ message: 'No users found' });
         }
 
         // Convertissez la liste des utilisateurs en une chaîne JSON
@@ -26,7 +26,7 @@ exports.getUsers = async (req, res) => {
             // La version a été modifiée, renvoyez la liste des utilisateurs.
             console.log("== modified")
             res.set('etag', ETag)
-            return res.json({ users, ETag });
+            return res.json({ users, etag: ETag });
         }
 
     } catch (error) {
@@ -124,7 +124,7 @@ exports.deleteUser = async (req, res) => {
         return res.json({ message: 'Utilisateur supprimé avec succès.' });
     } catch (error) {
         console.log(error); // Afficher l'erreur dans la console
-        return res.status(500).json({ error: 'Une erreur s\'est produite lors de la suppression de l\'utilisateur.' });
+        return res.status(500).json({ message: 'Une erreur s\'est produite lors de la suppression de l\'utilisateur.' });
     }
 };
 
