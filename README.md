@@ -4,7 +4,7 @@
 Cloner le repo
 
 ```bash
-git clone https://github.com/PierreGourgouillon/starter-node-back
+git clone [https://github.com/CB-Info/api-rest-starter-node.git](https://github.com/CB-Info/api-rest-starter-node.git)
 ```
 
 ### Step 2
@@ -28,7 +28,7 @@ git remote -v
 Ajouter le nouveau upstream
 
 ```bash
-git remote add origin [LINK_GITHUB]
+git remote add origin [GITHUB_LINK]
 ```
 
 ### Step 5
